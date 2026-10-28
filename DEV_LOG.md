@@ -269,3 +269,51 @@ scroll. Verified it is a real regression test:
 Also added a minimal `.gitignore` (`__pycache__/`, `.pytest_cache/`)
 because the test run created bytecode files that showed up in
 `git status`.
+
+---
+
+## Step 8 — Prompt 8: Test-coverage audit
+
+**Prompt (short):** "Audit the tests against: all difficulties, correct /
+incorrect / repeated / invalid guesses (digits, "", "ab", missing field,
+non-JSON), win, loss, guess after game over, new game after one ends,
+unknown ID, invalid difficulty, word absent from every response while
+playing, two simultaneous games. Add one end-to-end browser test. Run
+everything and summarize pass/fail."
+
+**Audit result — gaps found and filled:**
+| Gap | Added |
+|---|---|
+| API tests only used one difficulty with a fixed word | `test_start_game_each_difficulty_real_words` (real lists, checks pattern length is a valid length for that list) |
+| "word absent" only checked on 2 scripted games | `test_word_never_present_while_playing_real_words`: 15 full random games (3 difficulties × 5 seeds), every POST **and** GET response checked |
+| New game after one ends | `test_new_game_after_previous_game_ends` |
+| Two simultaneous games | `test_two_simultaneous_games_do_not_interfere` + `test_concurrent_duplicate_guesses_accepted_once` (12 threads guess the same letter at once → exactly one 200, eleven 409s) |
+| Error shape not checked uniformly | `test_error_responses_are_json_with_error_key`, `test_oversized_body_rejected` (413) |
+| Difficulty case-insensitivity untested at API level | `test_difficulty_is_case_insensitive` |
+| No browser flow tests | 9 Playwright tests in `tests/test_e2e.py`: click letters + page/drawing/key colours update, request payload is `{"letter": "e"}`, win, loss (drawing grows 1→6), physical keyboard incl. ignored after game over, new game without reload, hidden word not in JS state / DOM / sessionStorage / any API response body while playing, server error messages shown (404 and 500 via route mocking), reload resumes game, phone width has no horizontal scroll |
+
+- `tests/test_e2e.py` uses `pytest.importorskip("playwright.sync_api")` and
+  skips if Chromium can't launch, so `pytest` still works on a machine
+  without Playwright. It starts a real threaded werkzeug server on a free
+  port with a controllable fixed word.
+- `TESTING.md`: how to run tests, a table mapping each checklist item to
+  test names, and a manual browser checklist for the demo.
+
+**Tests:** `pytest` → **148 passed, 0 failed** (engine 47, words 24, API 65,
+browser 12). Ran the full suite 5× in a row: 148 passed each time (no
+flaky tests observed). With Playwright hidden from the import path:
+**136 passed, 1 skipped** (the e2e module).
+
+**Problems found + fixes:**
+- My first assertion `"correct" in key.get_attribute("class")` would also
+  pass for a key with class `incorrect` (substring match). Tightened to
+  compare the exact class list.
+- When I first simulated "Playwright not installed" by making the import
+  raise a plain `ImportError`, the run **errored** instead of skipping:
+  pytest 9's `importorskip` only skips on `ModuleNotFoundError`. A real
+  missing package raises `ModuleNotFoundError`, so the real scenario does
+  skip correctly (verified with a corrected simulation, and again in a
+  fresh venv in Step 10).
+- Honest caveat: the concurrency test passes, but under CPython's GIL the
+  race it guards against is rare, so passing doesn't fully prove the lock
+  is needed — it's a guard against regressions, not a proof.

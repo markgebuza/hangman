@@ -200,9 +200,9 @@ stored in browser-side JavaScript during play.
 
 ### Tasks
 
-- [ ] Audit engine, word, and API tests against the full checklist.
-- [ ] End-to-end browser test (or a written manual checklist).
-- [ ] Fix any bugs found while playing; add regression tests.
+- [x] Audit engine, word, and API tests against the full checklist.
+- [x] End-to-end browser test (or a written manual checklist).
+- [x] Fix any bugs found while playing; add regression tests.
 
 ### Completion Criteria
 
