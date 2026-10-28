@@ -111,19 +111,19 @@ All errors use the body `{"error": "<human-readable message>"}`.
 
 ### Tasks
 
-- [ ] Create `game.py` with a `HangmanGame` class.
-- [ ] Store the hidden word internally.
-- [ ] Track guessed letters and incorrect letters.
-- [ ] Allow a maximum of 6 incorrect guesses.
-- [ ] Validate that a guess is exactly one letter `a`–`z` (case-insensitive).
-- [ ] Detect and reject duplicate guesses.
-- [ ] Reject guesses after the game has ended.
-- [ ] Rejected guesses do not change game state.
-- [ ] Produce the masked pattern (e.g. `_ e _ _ e`).
-- [ ] Detect win and loss; status values `playing`, `won`, `lost`.
-- [ ] Provide a client-safe `to_dict()` that includes `word` only after the game ends.
-- [ ] No Flask or UI imports in `game.py`.
-- [ ] Unit tests in `tests/test_game.py`.
+- [x] Create `game.py` with a `HangmanGame` class.
+- [x] Store the hidden word internally.
+- [x] Track guessed letters and incorrect letters.
+- [x] Allow a maximum of 6 incorrect guesses.
+- [x] Validate that a guess is exactly one letter `a`–`z` (case-insensitive).
+- [x] Detect and reject duplicate guesses.
+- [x] Reject guesses after the game has ended.
+- [x] Rejected guesses do not change game state.
+- [x] Produce the masked pattern (e.g. `_ e _ _ e`).
+- [x] Detect win and loss; status values `playing`, `won`, `lost`.
+- [x] Provide a client-safe `to_dict()` that includes `word` only after the game ends.
+- [x] No Flask or UI imports in `game.py`.
+- [x] Unit tests in `tests/test_game.py`.
 
 ### Completion Criteria
 
@@ -136,7 +136,7 @@ are covered by unit tests.
 
 ### Tasks
 
-- [ ] Create `words/easy.txt`, `words/medium.txt`, `words/hard.txt`.
+- [x] Create `words/easy.txt`, `words/medium.txt`, `words/hard.txt`.
 - [ ] Create `words.py` that loads all three lists.
 - [ ] Strip whitespace, lowercase, drop non-alphabetic lines and duplicates.
 - [ ] Resolve paths relative to the module file (works from any working directory).

@@ -61,3 +61,38 @@ field names...). Add them to TODO.md. No code yet."
 - Missing `difficulty` → 400 (no silent default).
 
 **Tests:** none (no code yet).
+
+---
+
+## Step 3 — Prompt 3: Game engine (+ word lists)
+
+**Prompt (short):** "Implement Phase 1 in game.py: HangmanGame with hidden
+word, guessed/incorrect letters, max 6 wrong, status playing/won/lost;
+guess() accepts one a–z letter, rejects invalid/duplicate/after-end guesses
+without changing state; pattern; to_dict() with word only after the end; no
+Flask imports. Add tests/test_game.py. Create words/*.txt if missing."
+
+**What was built:**
+- `game.py`: `HangmanGame` class plus exceptions `GuessError` (base),
+  `InvalidGuessError`, `DuplicateGuessError`, `GameOverError`. Status is
+  derived from state (never stored separately) so it can't get out of sync.
+  `__repr__` deliberately omits the word so it can't leak into logs.
+- `words/easy.txt` (200 words, 4–7 letters), `words/medium.txt` (183, 5–9),
+  `words/hard.txt` (184, 8–12). Written by hand by the agent; validated by a
+  script: all lowercase a–z, lengths in range, no duplicates, no overlap
+  between files.
+- `tests/test_game.py`: correct, incorrect, uppercase, duplicate (case-
+  insensitive), invalid inputs (`""`, `"ab"`, digits, punctuation, space,
+  accented letter, non-strings), win, win on last life, loss, guess after
+  win/loss, word hidden while playing, word revealed after win/loss, and a
+  test that parses `game.py` and asserts it imports nothing but `string`.
+- `pytest.ini` so `pytest` works from the repo root without installing
+  the project.
+
+**Tests:** `pytest` → **47 passed**, 0 failed.
+
+**Problems found + fixes:**
+- Word-list validation script flagged `gazebo` (6 letters) in `hard.txt`,
+  below the 8-letter minimum — replaced with `graceful`. Also replaced
+  `eclipsed` (an inflected form) with `election` and `saloon` with `sandal`,
+  and trimmed easy.txt from 206 to 200 words.
