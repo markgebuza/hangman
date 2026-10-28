@@ -127,3 +127,49 @@ resolved relative to the module file. Add tests/test_words.py."
   `words/` share a name. Checked that `import words` resolves to the module
   (a plain module wins over a directory without `__init__.py`); the
   different-cwd subprocess test confirms it. Kept the spec's layout.
+
+---
+
+## Step 5 — Prompt 5: Flask REST API
+
+**Prompt (short):** "Implement Phase 3 in server.py: in-memory dict of games
+keyed by uuid4 hex; POST /api/games -> 201; GET /api/games/<id> -> 200/404;
+POST /api/games/<id>/guess -> 200, 400 bad JSON/letter/difficulty, 409
+duplicate/game over, 404 unknown; JSON errors; never send the word while
+playing; serve static/index.html at /. Add tests/test_api.py. Show curl
+commands to play by hand."
+
+**What was built:**
+- `server.py`: `create_app(word_source=None)` app factory (tests inject a
+  fixed word so games are deterministic) plus a module-level `app` for
+  gunicorn (`server:app`). `GameStore` wraps the dict with a
+  `threading.Lock`. Engine exceptions map to HTTP codes:
+  `InvalidGuessError` → 400, `DuplicateGuessError`/`GameOverError` → 409.
+  A generic `HTTPException` handler makes 404/405/413 JSON too. API
+  responses get `Cache-Control: no-store`. Body size capped at 16 KB.
+  `/healthz` endpoint for Render health checks. Word lists are loaded at
+  startup so a missing file fails at boot, not on the first request.
+  `python server.py` runs with debug **off** unless `FLASK_DEBUG=1`.
+- Placeholder `static/index.html` (real client comes in Phase 4).
+- `tests/test_api.py` (41 tests): every status code (201, 200, 400, 404,
+  405, 409), bad bodies (`"not json"`, `""`, `[1,2]`, `"easy"`, broken
+  JSON), invalid letters, missing fields, state unchanged after rejected
+  guesses, unique IDs, and full winning/losing games asserting `word` is
+  absent from every POST *and* GET response until the end.
+
+**Tests:** `pytest` → **112 passed**, 0 failed.
+
+**Manual curl check:** started `python3 server.py`, created an easy game,
+guessed e a o i s t r n → pattern progressed `_ _ _ _ _` → `s n a _ e`,
+incorrect letters o i t r, remaining 2, no `word` field; `"7"` → 400,
+unknown id → 404, POST without Content-Type header → 201 (body is parsed
+as JSON regardless of header, by design, so plain `curl -d` works).
+
+**Problems found + fixes:**
+- Decided to parse the body with `get_json(force=True, silent=True)` after
+  noticing that a `curl -d '{...}'` without `-H 'Content-Type:
+  application/json'` would otherwise be rejected with a confusing
+  error. Non-object JSON (e.g. a list or a bare string) is still a 400.
+- Small tooling gotcha: `pkill -f "python3 server.py"` inside the same
+  shell command also matched the shell running it (exit code 144). The
+  server was stopped correctly; later steps start/stop servers by PID.

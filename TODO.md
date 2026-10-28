@@ -155,18 +155,18 @@ difficulties are rejected cleanly.
 
 ### Tasks
 
-- [ ] Create `server.py` using Flask.
-- [ ] In-memory storage for active games, keyed by unique IDs.
-- [ ] `POST /api/games` — create a game.
-- [ ] `GET /api/games/{game_id}` — get current state.
-- [ ] `POST /api/games/{game_id}/guess` — submit a guess.
-- [ ] Validate difficulty and guess input.
-- [ ] JSON responses everywhere, including errors.
-- [ ] Correct HTTP status codes.
-- [ ] Handle unknown game IDs and malformed requests.
-- [ ] Never leak the hidden word while a game is in progress.
-- [ ] Serve the browser client at `/`.
-- [ ] API tests in `tests/test_api.py`.
+- [x] Create `server.py` using Flask.
+- [x] In-memory storage for active games, keyed by unique IDs.
+- [x] `POST /api/games` — create a game.
+- [x] `GET /api/games/{game_id}` — get current state.
+- [x] `POST /api/games/{game_id}/guess` — submit a guess.
+- [x] Validate difficulty and guess input.
+- [x] JSON responses everywhere, including errors.
+- [x] Correct HTTP status codes.
+- [x] Handle unknown game IDs and malformed requests.
+- [x] Never leak the hidden word while a game is in progress.
+- [x] Serve the browser client at `/`.
+- [x] API tests in `tests/test_api.py`.
 
 ### Completion Criteria
 
