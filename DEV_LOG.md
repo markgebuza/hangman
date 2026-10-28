@@ -96,3 +96,34 @@ Flask imports. Add tests/test_game.py. Create words/*.txt if missing."
   below the 8-letter minimum — replaced with `graceful`. Also replaced
   `eclipsed` (an inflected form) with `election` and `saloon` with `sandal`,
   and trimmed easy.txt from 206 to 200 words.
+
+---
+
+## Step 4 — Prompt 4: Word management
+
+**Prompt (short):** "Implement Phase 2: words.py loads easy/medium/hard,
+strips, lowercases, drops non-alphabetic lines and duplicates, provides
+random_word(difficulty); invalid difficulty raises a clear error; paths
+resolved relative to the module file. Add tests/test_words.py."
+
+**What was built:**
+- `words.py`: `WORDS_DIR` resolved from `__file__`; `load_word_file()`
+  (strip, lowercase, drop blanks / non a–z / duplicates, keep order);
+  `WordManager` (loads all three lists once, refuses an empty list, uses
+  `random.SystemRandom`); module-level `random_word(difficulty)` using a
+  lazily created shared manager; `InvalidDifficultyError(ValueError)` whose
+  message lists the valid options. Difficulty is case-insensitive.
+- `tests/test_words.py`: shipped files are clean (≥150 words, a–z, correct
+  length range, no duplicates, no cross-file overlap), random words come
+  from the right list and vary, invalid difficulties (`""`, `"expert"`,
+  `" easy"`, `None`, `1`, list) raise, cleaning logic on a temp file,
+  missing/empty files, and a subprocess test that imports `words` from a
+  **different working directory** (simulates Render starting elsewhere).
+
+**Tests:** `pytest` → **71 passed** (47 engine + 24 words), 0 failed.
+
+**Problems found + fixes:**
+- Potential name clash: the module `words.py` and the data directory
+  `words/` share a name. Checked that `import words` resolves to the module
+  (a plain module wins over a directory without `__init__.py`); the
+  different-cwd subprocess test confirms it. Kept the spec's layout.

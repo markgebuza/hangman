@@ -137,12 +137,12 @@ are covered by unit tests.
 ### Tasks
 
 - [x] Create `words/easy.txt`, `words/medium.txt`, `words/hard.txt`.
-- [ ] Create `words.py` that loads all three lists.
-- [ ] Strip whitespace, lowercase, drop non-alphabetic lines and duplicates.
-- [ ] Resolve paths relative to the module file (works from any working directory).
-- [ ] Provide `random_word(difficulty)`.
-- [ ] Raise a clear error for an invalid difficulty.
-- [ ] Tests in `tests/test_words.py`.
+- [x] Create `words.py` that loads all three lists.
+- [x] Strip whitespace, lowercase, drop non-alphabetic lines and duplicates.
+- [x] Resolve paths relative to the module file (works from any working directory).
+- [x] Provide `random_word(difficulty)`.
+- [x] Raise a clear error for an invalid difficulty.
+- [x] Tests in `tests/test_words.py`.
 
 ### Completion Criteria
 
