@@ -1,5 +1,59 @@
 <!doctype html>
 <html lang="en">
-<head><meta charset="utf-8"><title>Hangman</title></head>
-<body><h1>Hangman</h1><p>Browser client coming in Phase 4.</p></body>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hangman</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <main class="app">
+    <header class="top">
+      <h1>Hangman</h1>
+      <form id="new-game-form" class="controls">
+        <label for="difficulty">Difficulty</label>
+        <select id="difficulty" name="difficulty">
+          <option value="easy">Easy</option>
+          <option value="medium" selected>Medium</option>
+          <option value="hard">Hard</option>
+        </select>
+        <button type="submit" id="new-game">New Game</button>
+      </form>
+    </header>
+
+    <section class="board">
+      <svg id="gallows" viewBox="0 0 200 220" role="img" aria-labelledby="gallows-title">
+        <title id="gallows-title">Hangman drawing</title>
+        <g class="frame">
+          <line x1="20" y1="210" x2="140" y2="210" />
+          <line x1="50" y1="210" x2="50" y2="20" />
+          <line x1="50" y1="20" x2="130" y2="20" />
+          <line x1="130" y1="20" x2="130" y2="45" />
+        </g>
+        <g class="body">
+          <circle class="part" data-part="1" cx="130" cy="65" r="20" />
+          <line class="part" data-part="2" x1="130" y1="85" x2="130" y2="145" />
+          <line class="part" data-part="3" x1="130" y1="100" x2="105" y2="125" />
+          <line class="part" data-part="4" x1="130" y1="100" x2="155" y2="125" />
+          <line class="part" data-part="5" x1="130" y1="145" x2="110" y2="180" />
+          <line class="part" data-part="6" x1="130" y1="145" x2="150" y2="180" />
+        </g>
+      </svg>
+
+      <div class="state">
+        <p id="pattern" class="pattern" aria-live="polite">&nbsp;</p>
+        <dl class="stats">
+          <div><dt>Remaining guesses</dt><dd id="remaining">–</dd></div>
+          <div><dt>Guessed letters</dt><dd id="guessed">–</dd></div>
+          <div><dt>Incorrect letters</dt><dd id="incorrect">–</dd></div>
+        </dl>
+        <p id="message" class="message" role="status" aria-live="polite"></p>
+      </div>
+    </section>
+
+    <section id="keyboard" class="keyboard" aria-label="Letter keyboard"></section>
+    <p class="hint">Click a letter or type it on your keyboard.</p>
+  </main>
+  <script src="/static/app.js"></script>
+</body>
 </html>

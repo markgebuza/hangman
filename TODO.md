@@ -178,16 +178,16 @@ A complete game can be played using only `curl`.
 
 ### Tasks
 
-- [ ] `static/index.html`, `static/style.css`, `static/app.js`.
-- [ ] Difficulty selector and New Game button.
-- [ ] Display masked word, guessed letters, incorrect letters, remaining guesses.
-- [ ] On-screen A–Z keyboard; guessed letters are disabled.
-- [ ] Physical keyboard input.
-- [ ] Graphical hangman that updates after each incorrect guess.
-- [ ] Win/loss message.
-- [ ] New game without reloading the page.
-- [ ] Uses `fetch()` only; no game logic or hidden word in JavaScript.
-- [ ] Usable on desktop and mobile widths.
+- [x] `static/index.html`, `static/style.css`, `static/app.js`.
+- [x] Difficulty selector and New Game button.
+- [x] Display masked word, guessed letters, incorrect letters, remaining guesses.
+- [x] On-screen A–Z keyboard; guessed letters are disabled.
+- [x] Physical keyboard input.
+- [x] Graphical hangman that updates after each incorrect guess.
+- [x] Win/loss message.
+- [x] New game without reloading the page.
+- [x] Uses `fetch()` only; no game logic or hidden word in JavaScript.
+- [x] Usable on desktop and mobile widths.
 
 ### Completion Criteria
 

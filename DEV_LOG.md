@@ -173,3 +173,56 @@ as JSON regardless of header, by design, so plain `curl -d` works).
 - Small tooling gotcha: `pkill -f "python3 server.py"` inside the same
   shell command also matched the shell running it (exit code 144). The
   server was stopped correctly; later steps start/stop servers by PID.
+
+---
+
+## Step 6 — Prompt 6: Browser client
+
+**Prompt (short):** "Implement Phase 4: index.html, style.css, app.js.
+Difficulty select + New Game; masked word, guessed/incorrect letters,
+remaining guesses; on-screen A–Z keyboard that disables guessed letters;
+physical keyboard (ignored when game over); SVG hangman with 6 parts;
+win/loss message with the word from the server; new game without reload;
+all state from fetch(); show server errors; desktop + phone; relative URLs."
+
+**What was built:**
+- `static/index.html`: header with `<select>` + New Game (a `<form>` whose
+  submit is `preventDefault`-ed, so no reload), inline SVG gallows with 6
+  `.part` elements (head, body, left arm, right arm, left leg, right leg),
+  pattern, stats, status message (`aria-live`), keyboard container.
+- `static/app.js`: `api()` fetch wrapper that turns non-2xx responses into
+  an `ApiError` carrying the server's `error` text; `startNewGame()`,
+  `guessLetter()`, `render()`, `updateKeyboard()`. The JS never decides
+  if a guess is right: it renders `pattern`, `incorrect_letters`,
+  `status`, and shows `word` only when the server includes it at the end.
+  A `busy` flag prevents double submits while a request is in flight.
+  The game id (never the word) is kept in `sessionStorage` so a page
+  refresh resumes the game via `GET /api/games/<id>`; if the server
+  answers 404 (e.g. Render restarted and lost memory), the UI says so and
+  asks for a new game instead of failing silently.
+- `static/style.css`: light + dark colour schemes, CSS grid layout that
+  stacks on phones, 13-column keyboard on desktop / 7-column on phones,
+  44px touch targets; correct keys green, incorrect keys red.
+
+**Manual/browser checks (headless Chromium via Playwright, scripted):**
+- Played a medium game by clicking letters → lost on "pancake": 6 parts
+  shown, incorrect `t o i s h r`, message `You lost. The word was
+  "pancake".`
+- Switched to Hard + New Game: new pattern, a JS marker variable survived
+  (proves no page reload). Physical key `e` guessed and disabled the key;
+  pressing `e` again sent no request and showed no error.
+- Page reload resumed the same game. Killed the server → clicking a
+  letter showed "Could not reach the server…". Restarted the server →
+  clicking showed "This game no longer exists on the server…", all keys
+  disabled; New Game worked again.
+- No console errors. Dark mode checked by screenshot.
+
+**Tests:** `pytest` → **112 passed** (no new automated tests in this step;
+the browser test is added in Step 8).
+
+**Problems found:**
+- First version drew the not-yet-revealed body parts as faint "ghost"
+  lines. That makes it look like the whole figure is already drawn, so it
+  was changed to hide unrevealed parts completely (`opacity: 0`).
+- **Bug found at phone width (375px):** on Hard, the 10-letter pattern
+  wrapped onto two lines in the middle of the word. Fixed in Step 7.
