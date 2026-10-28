@@ -25,6 +25,88 @@ an HTML/CSS/JavaScript browser client, and a cloud deployment on Render.
 
 ---
 
+## Plan Review Against Assignment Requirements
+
+Gaps and ambiguities found when comparing the first draft of this plan with
+the assignment requirements:
+
+| Requirement | In draft plan? | Action |
+|---|---|---|
+| Engine independent of Flask/UI | Yes (Phase 1) | — |
+| No guesses after game ends | Yes | Added explicit test item |
+| Unique game IDs, separate game states | Partly | Added "two simultaneous games don't interfere" test |
+| Request validation + correct status codes | Vague | Status-code table below |
+| Hidden word never sent while `playing` | Yes | Test **every** response, not just one |
+| Click **and** physical keyboard | Yes | Physical keys ignored after game over |
+| Hangman drawing updates | Yes | Exactly 6 parts, one per wrong guess |
+| New game without page reload | Yes | — |
+| No game logic / hidden word in JS | Yes | JS only renders server responses |
+| Tests for all of the above | Partly | Phase 5 audit + E2E browser test |
+| Public HTTPS deployment | Yes (Phase 7) | Render provides HTTPS |
+| README with local run instructions | Yes (Phase 6) | — |
+| Exact JSON field names | **Missing** | Defined below |
+| Duplicate-guess behaviour | **Ambiguous** (spec: "ignored or rejected") | Decided below |
+| Case of letters, whitespace | **Missing** | Decided below |
+| Missing difficulty | **Missing** | Decided below |
+| Thread safety of in-memory store | **Missing** | Lock around the dict |
+| Gunicorn worker count | **Missing** | 1 worker (in-memory state) |
+
+## Design Decisions
+
+**JSON game state** (returned by all three endpoints):
+
+```json
+{
+  "game_id": "3f2c9e0a...",           // uuid4 hex, 32 chars
+  "difficulty": "medium",
+  "pattern": "_ e _ _ e",             // lowercase letters / "_" separated by single spaces
+  "guessed_letters": ["e", "x"],      // every accepted guess, in the order guessed
+  "incorrect_letters": ["x"],         // accepted guesses not in the word, in order
+  "remaining_guesses": 5,             // 6 - len(incorrect_letters)
+  "max_incorrect": 6,
+  "status": "playing"                 // "playing" | "won" | "lost"
+}
+```
+
+`"word"` is added **only** when `status` is `"won"` or `"lost"`. While
+`playing` the key is absent (not `null`).
+
+**HTTP status codes:**
+
+| Situation | Code |
+|---|---|
+| Game created | 201 |
+| Get state / accepted guess | 200 |
+| Body missing, not JSON, or not a JSON object | 400 |
+| `difficulty` missing or not one of easy/medium/hard | 400 |
+| `letter` missing, not a string, empty, more than one char, or not a–z | 400 |
+| Duplicate guess (letter already guessed) | 409 |
+| Guess after the game is over | 409 |
+| Unknown game ID | 404 |
+| Unknown `/api/...` route | 404 (JSON) |
+| Wrong HTTP method | 405 (JSON) |
+
+All errors use the body `{"error": "<human-readable message>"}`.
+
+**Other rules:**
+- Letters are case-insensitive: `"E"` is accepted and stored as `"e"`.
+- Surrounding whitespace is **not** stripped: `" e"` is rejected (400).
+  Clients send exactly one letter.
+- Duplicate guesses are **rejected** (409), never counted as incorrect and
+  never change state (matches the spec's scoring section, which says
+  duplicates "are rejected" and "do not change game state").
+- Rejected guesses (400 or 409) never change game state.
+- `difficulty` is required (no default) so mistakes are visible.
+- Game IDs are `uuid.uuid4().hex`.
+- Games are stored in a module-level dict guarded by a `threading.Lock`.
+  No persistence and no eviction (documented as a known limitation).
+- Production runs gunicorn with **1 worker**, because each worker process
+  would have its own separate in-memory dict.
+- The hangman drawing has 6 parts in this order: head, body, left arm,
+  right arm, left leg, right leg.
+
+---
+
 ## Phase 1 — Game Engine
 
 ### Tasks

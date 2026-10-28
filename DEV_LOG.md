@@ -33,3 +33,31 @@ Keep the spec's REST API. No code yet."
   is not modified).
 
 **Tests:** none (no code yet).
+
+---
+
+## Step 2 — Prompt 2: Check the plan against the assignment
+
+**Prompt (short):** "Compare the revised TODO.md against the engine / server /
+browser / tests / deployment requirements, list anything missing or
+ambiguous, and propose concrete decisions (duplicate guesses, exact JSON
+field names...). Add them to TODO.md. No code yet."
+
+**What was done:**
+- Added a "Plan Review Against Assignment Requirements" table to `TODO.md`
+  listing each requirement, whether the draft covered it, and the action.
+- Added a "Design Decisions" section: exact JSON field names, a full
+  HTTP status-code table, case handling, whitespace handling, duplicate
+  guesses, ID format, thread safety, single gunicorn worker, and the
+  order of the 6 hangman body parts.
+
+**Ambiguities found and decisions:**
+- Spec says duplicates are "ignored or rejected" — chose **reject with
+  409**, state unchanged (consistent with the spec's scoring section).
+- Spec doesn't define error format — chose `{"error": "..."}` everywhere.
+- Spec's guess response omits `game_id`; decided every response returns
+  the same full state object (superset of the spec's fields) to keep the
+  client simple.
+- Missing `difficulty` → 400 (no silent default).
+
+**Tests:** none (no code yet).
