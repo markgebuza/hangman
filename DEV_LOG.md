@@ -317,3 +317,28 @@ flaky tests observed). With Playwright hidden from the import path:
 - Honest caveat: the concurrency test passes, but under CPython's GIL the
   race it guards against is rare, so passing doesn't fully prove the lock
   is needed — it's a guard against regressions, not a proof.
+
+---
+
+## Step 9 — Prompt 9: Understand the request/response flow
+
+**Prompt (short):** "Walk me through exactly what happens when I click
+the letter E: JS function, fetch() request (method, URL, body), Flask
+route, what the engine does, JSON returned, how the JS updates the DOM.
+File names and line numbers. Then what to look for in Chrome DevTools >
+Network for the demo."
+
+**What was produced:** `docs/REQUEST_FLOW.md`
+- ASCII sequence diagram browser → Flask route → engine → back.
+- 15 numbered steps with `file:line` references (`static/app.js`,
+  `server.py`, `game.py`), the exact HTTP request and response.
+- A DevTools demo guide: Fetch/XHR filter, what to show in Headers /
+  Payload / Response for `POST /api/games` and `POST …/guess`, where the
+  `word` field first appears, how to show a 404/409 from the Console, and
+  how to prove New Game doesn't reload the page.
+
+**Verification:** every line reference was checked against the files
+with `sed -n` after writing (all matched). Re-checked again at the end
+of the project (Step 14) in case later edits shifted lines.
+
+**Tests:** no code changes; `pytest` → 148 passed.
