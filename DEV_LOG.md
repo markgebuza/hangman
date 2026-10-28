@@ -226,3 +226,46 @@ the browser test is added in Step 8).
   was changed to hide unrevealed parts completely (`opacity: 0`).
 - **Bug found at phone width (375px):** on Hard, the 10-letter pattern
   wrapped onto two lines in the middle of the word. Fixed in Step 7.
+
+---
+
+## Step 7 — Prompt 7: Fix what I found (pattern wrapping on phones)
+
+**Prompt (short):** "While playing I saw: on Hard, at phone width, the
+masked word wraps onto two lines in the middle of the word. Find the root
+cause, fix it, add a regression test, run the full suite."
+
+**Root cause:** the pattern for a 12-letter word is 23 characters
+(`_ _ _ … _`). The CSS used `font-size: clamp(1.6rem, 6vw, 2.6rem)`,
+`letter-spacing: 0.15em`, and `word-break: break-all`. The minimum
+1.6rem was too big for a 375px phone, and `break-all` let the browser
+split anywhere. The font size was also tied to the *viewport* (`vw`), not
+to the column the pattern lives in, so it **also wrapped on desktop**
+(the regression test proved this — see below).
+
+**Fix (`static/style.css`):**
+- `white-space: nowrap`, smaller letter-spacing, and font size based on
+  the pattern's container width: `.state { container-type: inline-size }`
+  + `font-size: clamp(0.9rem, 5.6cqi, 2.6rem)` (with a plain `1.4rem`
+  fallback line for older browsers).
+- **Second bug introduced by the fix:** on phones `.board` uses
+  `justify-items: center`; a size container gets no width from its
+  content, so `.state` collapsed to **0px wide** and the pattern
+  overflowed. Caught by the new test (`clientWidth` was 0). Fixed by
+  stretching `.state` to `width: 100%` in the mobile media query.
+- Also switched the pattern from uppercase to lowercase because an
+  uppercase monospace `O` looked like a zero in the screenshot.
+
+**Regression test:** `tests/test_e2e.py::test_long_pattern_stays_on_one_line`
+(Playwright, widths 320 / 375 / 1100, word `kaleidoscope`): asserts the
+pattern is one line high, not clipped, and the page has no horizontal
+scroll. Verified it is a real regression test:
+- with the **old** CSS: 3 failed (320, 375, **and 1100**);
+- with the first fix only: 2 failed (320, 375 — the 0px container);
+- with the final fix: 3 passed.
+
+**Tests:** `pytest` → **115 passed**, 0 failed.
+
+Also added a minimal `.gitignore` (`__pycache__/`, `.pytest_cache/`)
+because the test run created bytecode files that showed up in
+`git status`.

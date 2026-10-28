@@ -104,13 +104,20 @@ button:focus-visible, select:focus-visible {
 #gallows .part { stroke: var(--bad); opacity: 0; transition: opacity 0.25s; }
 #gallows .part.shown { opacity: 1; }
 
+.state { min-width: 0; container-type: inline-size; }
+
+/* The pattern for the longest (12-letter) word is 23 characters wide
+   ("_ _ ... _"). It must stay on ONE line, so the font size scales with the
+   width of its container (cqi units) instead of the viewport. */
 .pattern {
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  font-size: clamp(1.6rem, 6vw, 2.6rem);
-  letter-spacing: 0.15em;
+  font-size: 1.4rem; /* fallback for browsers without container units */
+  font-size: clamp(0.9rem, 5.6cqi, 2.6rem);
+  letter-spacing: 0.08em;
   margin: 0 0 16px;
-  word-break: break-all;
-  text-transform: uppercase;
+  white-space: nowrap;
+  overflow-x: auto;
+  /* lowercase on purpose: an uppercase monospace O looks like a zero */
 }
 
 .stats { margin: 0; display: grid; gap: 8px; }
@@ -147,6 +154,9 @@ button:focus-visible, select:focus-visible {
 @media (max-width: 600px) {
   .board { grid-template-columns: 1fr; justify-items: center; text-align: center; padding: 16px; }
   #gallows { max-width: 180px; }
+  /* A size container gets no width from its content, so it must be
+     stretched explicitly or `justify-items: center` collapses it to 0px. */
+  .state { justify-self: stretch; width: 100%; }
   .stats div { justify-content: center; }
   .stats dt { min-width: 0; }
   .keyboard { grid-template-columns: repeat(7, 1fr); }
