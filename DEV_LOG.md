@@ -441,3 +441,47 @@ the URL to the README — left for the student.
   line and truncated at 200 characters.
 
 **Tests:** `pytest` → **149 passed**, 0 failed.
+
+---
+
+## Step 14 — Prompt 14: Final requirements audit
+
+**Prompt (short):** "Audit the repo against the submission requirements
+and give me a ✅/❌ checklist with file paths. Fix anything missing, then
+commit (and push — push skipped here, see Steps 11–12)."
+
+| Requirement | Status | Where |
+|---|---|---|
+| Python game engine, independent of Flask/UI | ✅ | `game.py` (import check in `tests/test_game.py`) |
+| Flask server + REST API (3 spec endpoints) | ✅ | `server.py` |
+| HTML/CSS/JS frontend using fetch(), no game logic | ✅ | `static/index.html`, `static/style.css`, `static/app.js` |
+| Word lists, three difficulties | ✅ | `words/easy.txt`, `words/medium.txt`, `words/hard.txt`, `words.py` |
+| Original `SPECIFICATION.md` unmodified | ✅ | `git diff 29d323a HEAD -- SPECIFICATION.md` is empty |
+| Updated `TODO.md`: in-scope phases checked, out-of-scope marked | ✅ | Phases 1–6 all checked; Phase 7 open (needs student); out-of-scope section labelled "NOT IMPLEMENTED (intentionally)" |
+| `requirements.txt` + `render.yaml` | ✅ | pinned versions; 1 gunicorn worker |
+| Tests | ✅ | `tests/` — 149 passed |
+| README with local run instructions | ✅ | `README.md` |
+| API reference with examples | ✅ | `README.md` → REST API |
+| Known limitations documented | ✅ | `README.md` → Known limitations |
+| No credentials committed | ✅ | secret grep clean; no `.env`; `.gitignore` covers it |
+| No build junk committed | ❌ → ✅ | see problem below |
+| Smoke test for live URL | ✅ (local) | `smoke_test.py`; live run pending |
+| Public HTTPS deployment + live URL in README | ❌ (student) | needs Render account |
+| Pushed to GitHub | ❌ (student) | no remote configured |
+
+**Problems found + fixes:**
+- **Committed bytecode:** `__pycache__/*.pyc` files had been committed in
+  the Phase 1–3 commits, because the `.gitignore` was only added in
+  Step 7. Removed them from the index with `git rm --cached` (the
+  `.gitignore` now prevents it happening again). They remain in the
+  history of those early commits, which is harmless (no secrets).
+- Re-verified the `file:line` references in `docs/REQUEST_FLOW.md`:
+  `server.py`, `game.py` and `static/app.js` have not changed since that
+  document was written, so all references are still correct. Also ran
+  the DevTools console snippets from that guide in a real browser: they
+  return `409` and the JSON 404 error as described.
+- Added `tests/test_smoke.py` to the README project tree, and a note in
+  `TODO.md` Phase 7 that the smoke test is ready but not yet run live.
+
+**Tests:** `pytest` → **149 passed, 0 failed** (with Playwright);
+137 passed + 1 skipped module without Playwright.

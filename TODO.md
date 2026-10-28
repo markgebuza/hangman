@@ -236,6 +236,9 @@ A new user can clone, install, run, and test the project using only the README.
 - [ ] Deploy to Render.
 - [ ] Verify the public HTTPS URL loads and a full game can be played.
 - [ ] Run a smoke test against the live URL.
+  (`smoke_test.py` is written and passes 36/36 against a local gunicorn
+  started with the Render command; it still has to be run against the
+  live URL.)
 - [ ] Add the live URL to the README.
 
 ### Completion Criteria
@@ -246,7 +249,7 @@ The game is publicly playable over HTTPS.
 
 # Out of Scope for This Assignment
 
-The following phases from the original TODO are part of the full project
+**Status: NOT IMPLEMENTED (intentionally).** The following phases from the original TODO are part of the full project
 specification but are **not** required for this assignment. They are kept
 here for reference and are intentionally not implemented.
 

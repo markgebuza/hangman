@@ -45,7 +45,8 @@ hangman/
     ├── test_game.py      engine unit tests
     ├── test_words.py     word-list tests
     ├── test_api.py       REST API tests (Flask test client)
-    └── test_e2e.py       browser tests (Playwright; skipped if not installed)
+    ├── test_e2e.py       browser tests (Playwright; skipped if not installed)
+    └── test_smoke.py     runs smoke_test.py against a local server
 ```
 
 ## Local setup
