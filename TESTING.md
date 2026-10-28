@@ -44,7 +44,7 @@ pytest tests/test_e2e.py -v
 | Browser: server errors shown in UI | `test_e2e.py::test_server_error_message_shown_in_ui` |
 | Browser: layout at phone widths | `test_e2e.py::test_long_pattern_stays_on_one_line`, `test_phone_width_has_no_horizontal_scroll` |
 
-Deployed site: `python smoke_test.py https://<your-app>.onrender.com`
+Deployed site: `python smoke_test.py https://<your-app>.onrender.com`. The script itself is kept working by `tests/test_smoke.py`, which runs it against a local server.
 (see README).
 
 ## Manual browser checklist

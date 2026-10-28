@@ -93,7 +93,7 @@ python -m playwright install chromium
 pytest
 ```
 
-Current result: **148 passed** with Playwright installed (136 passed,
+Current result: **149 passed** with Playwright installed (137 passed,
 1 module skipped without it). See [`TESTING.md`](TESTING.md) for what each
 test covers and a manual browser checklist.
 

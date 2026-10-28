@@ -392,3 +392,52 @@ using only the README in a new venv."
 - Not verified here (needs the student's accounts): the actual Render
   build. The README's log excerpt is what gunicorn printed locally plus
   Render's usual build/live lines, so exact wording on Render may differ.
+
+---
+
+## Step 11–12 — Prompts 11 & 12: Push to GitHub / Deploy to Render
+
+**Skipped by the agent on purpose.** These need the student's own GitHub
+and Render accounts (login, OAuth authorization). No remote is configured
+and nothing was pushed. Steps for the student are in `README.md`
+("Deploying to Render").
+
+---
+
+## Step 13 — Prompt 13 (partial): smoke test script
+
+**Prompt (short):** "Write and run smoke_test.py (takes the URL as an
+argument): loads /, creates games at all three difficulties, valid /
+invalid / duplicate guess, plays one game to completion, checks status
+codes, confirms word never present while playing. Allow 60 s for cold
+starts."
+
+**What was built:**
+- `smoke_test.py` — standard library only (`urllib`), so it runs without
+  installing anything. 60 s timeout per request plus up to 60 s of retries
+  on the first request while a sleeping Render instance wakes up. Checks
+  (36 total): `/` is the Hangman page; 201 + clean state for each
+  difficulty; valid guess 200; invalid `"1"`, `""`, `"ab"` → 400 with JSON
+  error; non-JSON body → 400; duplicate → 409; state unchanged by rejected
+  guesses; unknown ID 404; invalid difficulty 400; plays the easy game to
+  the end (checking every POST *and* a GET after each guess for `word`);
+  final response reveals `word`; guess after game over → 409; the medium
+  and hard games were untouched. Exit code 0 only if everything passed.
+- `tests/test_smoke.py` runs the script against an in-process server so
+  it can't silently rot.
+
+**Run against local gunicorn** (exact Render start command, port 8123):
+**36 passed, 0 failed**, exit 0.
+**Negative checks:** against a plain `python -m http.server` → 4 FAILs,
+exit 1; against a closed port → retried for 60 s, then exited with
+"Could not reach …".
+
+**Not done (needs the live URL):** running it against Render and adding
+the URL to the README — left for the student.
+
+**Problems found + fixes:**
+- When a check failed against a non-Hangman server, the failure detail
+  dumped a whole HTML error page into the terminal. Now collapsed to one
+  line and truncated at 200 characters.
+
+**Tests:** `pytest` → **149 passed**, 0 failed.
