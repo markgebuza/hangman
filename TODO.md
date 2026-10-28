@@ -215,12 +215,12 @@ full suite passes.
 
 ### Tasks
 
-- [ ] `requirements.txt` with pinned versions.
-- [ ] `render.yaml` for a Render web service.
-- [ ] `.gitignore`.
-- [ ] Debug mode off in production; no secrets committed.
-- [ ] `README.md`: overview, structure, local setup, tests, API reference, deployment, known limitations.
-- [ ] Verify a fresh install from the README instructions.
+- [x] `requirements.txt` with pinned versions.
+- [x] `render.yaml` for a Render web service.
+- [x] `.gitignore`.
+- [x] Debug mode off in production; no secrets committed.
+- [x] `README.md`: overview, structure, local setup, tests, API reference, deployment, known limitations.
+- [x] Verify a fresh install from the README instructions.
 
 ### Completion Criteria
 

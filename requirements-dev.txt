@@ -1,0 +1,4 @@
+# Optional extras for the end-to-end browser tests (tests/test_e2e.py).
+# After installing, also run:  python -m playwright install chromium
+-r requirements.txt
+playwright==1.63.0

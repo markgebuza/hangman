@@ -1,0 +1,7 @@
+# Runtime
+Flask==3.1.3
+Werkzeug==3.1.9
+gunicorn==26.2.0
+
+# Tests (small; installed on Render too so one file covers everything)
+pytest==9.1.1

@@ -342,3 +342,53 @@ with `sed -n` after writing (all matched). Re-checked again at the end
 of the project (Step 14) in case later edits shifted lines.
 
 **Tests:** no code changes; `pytest` → 148 passed.
+
+---
+
+## Step 10 — Prompt 10: Deployment readiness + README
+
+**Prompt (short):** "Prepare for Render: pinned requirements.txt,
+render.yaml (free, build pip install, start gunicorn --workers 1
+server:app — explain why one worker), .gitignore, debug off, no secrets.
+Write README: overview, structure, local setup, tests, API reference with
+examples, deployment, known limitations. Run tests; verify a fresh install
+using only the README in a new venv."
+
+**What was built:**
+- `requirements.txt`: `Flask==3.1.3`, `Werkzeug==3.1.9`,
+  `gunicorn==26.2.0`, `pytest==9.1.1`.
+- `requirements-dev.txt`: adds `playwright==1.63.0` for the optional
+  browser tests (kept out of the main file so Render doesn't install it).
+- `render.yaml`: free Python web service, build/start commands as given,
+  `healthCheckPath: /healthz`, with a comment explaining the single worker.
+- `.gitignore`: venv/.venv/env, `__pycache__`, `*.pyc`, `.pytest_cache`,
+  `.env`, `.DS_Store`, editor folders.
+- `README.md`: everything requested, incl. the "why one worker"
+  explanation, a status-code table, documented additions to the spec's
+  API, Render steps (Blueprint and manual), and known limitations. Live URL
+  is a placeholder until the student deploys.
+
+**Verification:**
+- Secret scan (`grep` for secret/key/password/token/private key):
+  nothing found. Debug is off by default (`FLASK_DEBUG` must be set to
+  `1` explicitly); gunicorn never calls `app.run`.
+- **Fresh install** following only the README: copied the tracked files to
+  an empty directory, `python3 -m venv venv`, `pip install -r
+  requirements.txt`, `pytest` → **136 passed, 1 skipped** (Playwright not
+  in the fresh venv, so the browser tests skipped cleanly — this is the
+  real-world confirmation promised in Step 8). `python server.py` →
+  "Debug mode: off", `/` → 200, `POST /api/games` → 201. Then gunicorn with
+  exactly the Render start command (port 8123) → `/healthz` 200, `/` 200.
+- Full suite in the dev environment: **148 passed**.
+
+**Problems found + fixes:**
+- Noticed the pinned gunicorn 26.x and pytest 9.x require **Python ≥3.10**
+  (checked `Requires-Python` metadata). macOS's built-in `python3` can be
+  3.9, so the README now states "Python 3.10 or newer" and explains how to
+  set `PYTHON_VERSION` on Render if its build ever picks an older Python.
+- My first README API examples were inconsistent (same game ID, but a
+  pattern containing `e` for the word `canvas`). Fixed so all examples
+  describe one consistent game.
+- Not verified here (needs the student's accounts): the actual Render
+  build. The README's log excerpt is what gunicorn printed locally plus
+  Render's usual build/live lines, so exact wording on Render may differ.

@@ -1,0 +1,13 @@
+# Render Blueprint: https://render.com/docs/blueprint-spec
+services:
+  - type: web
+    name: hangman
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    # ONE worker: games live in this process's memory. Several worker
+    # processes would each have their own separate dict of games, so a
+    # guess could reach a worker that has never heard of the game (404).
+    startCommand: gunicorn --bind 0.0.0.0:$PORT --workers 1 server:app
+    healthCheckPath: /healthz
+    autoDeploy: true
