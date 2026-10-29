@@ -3,8 +3,7 @@
 A web-based Hangman game for CSE 4095: a Python game engine, a Flask REST
 API, and an HTML/CSS/JavaScript browser client, deployed on Render.
 
-**Live site:** `https://<your-app>.onrender.com` *(replace after deploying —
-see [Deploying to Render](#deploying-to-render))*
+**Live site:** https://hangman-8t6b.onrender.com/
 
 The server is authoritative: all game rules run in Python, and the hidden
 word is never sent to the browser until the game is over. The browser only
