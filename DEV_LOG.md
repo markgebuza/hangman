@@ -485,3 +485,33 @@ commit (and push — push skipped here, see Steps 11–12)."
 
 **Tests:** `pytest` → **149 passed, 0 failed** (with Playwright);
 137 passed + 1 skipped module without Playwright.
+
+## Step 15 — Prompt 15: Resolve remaining TODO items (Phase 7)
+
+**Prompt:** "resolve all issues in todo.md"
+
+Only Phase 7 was open. Everything had already been done by hand; this
+step verified it and checked the boxes in `TODO.md`.
+
+- **Pushed to GitHub:** `git ls-remote origin main` = local `HEAD`
+  (`4228811`). Repo `markgebuza/hangman` is private.
+- **Deployed to Render:** https://hangman-8t6b.onrender.com/ is live.
+- **Live smoke test:** `python smoke_test.py https://hangman-8t6b.onrender.com`
+  → **36 passed, 0 failed** (page loads, all three difficulties, a full
+  game played to the end, every error code, `word` never leaked while
+  playing).
+- **Live URL in README:** already at the top of `README.md`.
+
+**Problems / open issues:** The GitHub repo is private. If the grader
+needs to see it, make it public or add them as a collaborator. Clicking
+through a game in a real browser on the live site is still a manual check.
+
+**Bug found while re-running tests:** `test_load_word_file_cleans_input`
+failed on Windows with `UnicodeDecodeError`. Cause: the test wrote `café`
+with `Path.write_text()` and no encoding, so Windows used cp1252, but
+`words.py` reads word files as UTF-8. The app was fine; the test depended
+on the machine's locale. Fix: every `read_text`/`write_text` in
+`tests/test_words.py` now passes `encoding="utf-8"`. The test itself is the
+regression check.
+
+**Tests:** `pytest` → **149 passed, 0 failed** (1 failed before the fix).

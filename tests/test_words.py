@@ -27,7 +27,7 @@ LENGTHS = {"easy": (4, 7), "medium": (5, 9), "hard": (8, 12)}
 
 @pytest.mark.parametrize("difficulty", DIFFICULTIES)
 def test_shipped_word_files_are_clean(difficulty):
-    raw = (ROOT / "words" / f"{difficulty}.txt").read_text().split("\n")
+    raw = (ROOT / "words" / f"{difficulty}.txt").read_text(encoding="utf-8").split("\n")
     lines = [l for l in raw if l]
     assert len(lines) >= 150
     assert len(lines) == len(set(lines)), "duplicate words in file"
@@ -80,14 +80,14 @@ def test_normalize_difficulty():
 
 def test_load_word_file_cleans_input(tmp_path):
     f = tmp_path / "w.txt"
-    f.write_text("  Apple \n\nbanana\nAPPLE\nhello world\nabc123\nno-dash\ncafé\ncherry\n")
+    f.write_text("  Apple \n\nbanana\nAPPLE\nhello world\nabc123\nno-dash\ncafé\ncherry\n", encoding="utf-8")
     assert load_word_file(f) == ["apple", "banana", "cherry"]
 
 
 def _write_lists(d, easy="cat\n", medium="horse\n", hard="elephant\n"):
-    (d / "easy.txt").write_text(easy)
-    (d / "medium.txt").write_text(medium)
-    (d / "hard.txt").write_text(hard)
+    (d / "easy.txt").write_text(easy, encoding="utf-8")
+    (d / "medium.txt").write_text(medium, encoding="utf-8")
+    (d / "hard.txt").write_text(hard, encoding="utf-8")
 
 
 def test_manager_with_custom_directory(tmp_path):
@@ -104,7 +104,7 @@ def test_manager_rejects_empty_list(tmp_path):
 
 
 def test_manager_missing_file(tmp_path):
-    (tmp_path / "easy.txt").write_text("cat\n")
+    (tmp_path / "easy.txt").write_text("cat\n", encoding="utf-8")
     with pytest.raises(FileNotFoundError):
         WordManager(tmp_path)
 

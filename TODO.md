@@ -232,14 +232,16 @@ A new user can clone, install, run, and test the project using only the README.
 
 ### Tasks
 
-- [ ] Push the repository to GitHub.
-- [ ] Deploy to Render.
-- [ ] Verify the public HTTPS URL loads and a full game can be played.
-- [ ] Run a smoke test against the live URL.
-  (`smoke_test.py` is written and passes 36/36 against a local gunicorn
-  started with the Render command; it still has to be run against the
-  live URL.)
-- [ ] Add the live URL to the README.
+- [x] Push the repository to GitHub.
+  (`git ls-remote origin main` matches local `HEAD`; the repo is private.)
+- [x] Deploy to Render.
+- [x] Verify the public HTTPS URL loads and a full game can be played.
+  (`GET /` returns the Hangman page and the smoke test plays a full game
+  to the end over HTTPS.)
+- [x] Run a smoke test against the live URL.
+  (`python smoke_test.py https://hangman-8t6b.onrender.com` → 36 passed,
+  0 failed on 2026-10-29.)
+- [x] Add the live URL to the README.
 
 ### Completion Criteria
 
